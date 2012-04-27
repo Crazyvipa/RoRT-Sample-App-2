@@ -1,14 +1,19 @@
 class UsersController < ApplicationController
+  before_filter :authenticate, :only => [:index, :edit, :update]
+  before_filter :correct_user, :only => [:edit, :update]
+  
+  def index
+    @users = User.all
+    @title = "All users"
+  end
   def new
     @title = "Sign up"
     @user = User.new
   end
-
   def show
     @user = User.find(params[:id])
     @title = @user.name
   end
-  
   def create
     @user = User.new(params[:user])
     if @user.save
@@ -33,4 +38,13 @@ class UsersController < ApplicationController
       render 'edit'      
     end
   end
+  
+  private
+    def authenticate
+      deny_access unless signed_in?
+    end
+    def correct_user
+      @user = User.find(params[:id])
+      redirect_to(root_path, :notice => 'Unable to edit that profile!') unless current_user?(@user)
+    end
 end
