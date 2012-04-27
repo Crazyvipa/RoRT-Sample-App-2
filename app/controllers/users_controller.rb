@@ -19,4 +19,18 @@ class UsersController < ApplicationController
       render 'new'
     end
   end
+  def edit
+    @title = "Edit user"
+    @user = User.find(params[:id])
+  end
+  
+  def update
+    @user = User.find(params[:id])
+    if @user.update_attributes(params[:user])
+      redirect_to @user, :flash => { :success => "Your user profile has been updated" }
+    else
+      @title = "Edit user"
+      render 'edit'      
+    end
+  end
 end
