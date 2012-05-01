@@ -21,6 +21,10 @@ class User < ActiveRecord::Base
 
   before_save :encrypt_password
 
+  def feed
+    Micropost.where("user_id = ?", id)
+  end
+  
   class << self
     def authenticate(email, submitted_password)
       user = find_by_email(email)
@@ -36,6 +40,7 @@ class User < ActiveRecord::Base
   def has_password?(submitted_password)
     self.encrypted_password == encrypt(submitted_password)
   end
+  
   private
     def encrypt_password
       self.salt = make_salt if self.new_record?
